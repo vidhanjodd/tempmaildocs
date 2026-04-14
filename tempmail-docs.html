@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TempMail — Project Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;
+  --surface:#111;
+  --surface2:#181818;
+  --surface3:#202020;
+  --border:#252525;
+  --border2:#333;
+  --accent:#c8f060;
+  --accent2:#a0d040;
+  --accent-glow:rgba(200,240,96,0.12);
+  --text:#efefef;
+  --text-muted:#777;
+  --text-dim:#aaa;
+  --red:#ff5c5c;
+  --blue:#5cb8ff;
+  --orange:#ffaa5c;
+  --purple:#b09fff;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Lora',serif;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* GRID BG */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:80px 80px;
+  opacity:0.2;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* NAV */
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:1000;
+  background:rgba(8,8,8,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:60px;
+  display:flex;
+  align-items:center;
+  padding:0 2rem;
+  gap:2rem;
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:1.1rem;
+  letter-spacing:-0.02em;
+  color:var(--text);
+  text-decoration:none;
+  margin-right:auto;
+}
+.nav-logo span{color:var(--accent)}
+.nav-links{
+  display:flex;
+  gap:0;
+  list-style:none;
+}
+.nav-links a{
+  font-family:'Syne',sans-serif;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  padding:6px 14px;
+  border-radius:4px;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--accent)}
+
+/* HERO */
+.hero{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:6rem 2rem 4rem;
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(200,240,96,0.05) 0%,transparent 65%);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hero-tag{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid rgba(200,240,96,0.25);
+  background:rgba(200,240,96,0.05);
+  padding:5px 14px;
+  border-radius:20px;
+  margin-bottom:2rem;
+  animation:fadeUp 0.5s ease both;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(4rem,12vw,9rem);
+  font-weight:800;
+  line-height:0.9;
+  letter-spacing:-0.04em;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.5s ease both 0.1s;
+}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero-sub{
+  font-size:1.1rem;
+  color:var(--text-muted);
+  max-width:520px;
+  margin-bottom:3rem;
+  animation:fadeUp 0.5s ease both 0.2s;
+  font-family:'Syne',sans-serif;
+  font-weight:400;
+}
+.hero-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  animation:fadeUp 0.5s ease both 0.3s;
+}
+.pill{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--border2);
+  color:var(--text-dim);
+  background:var(--surface);
+}
+.pill.green{border-color:rgba(200,240,96,0.3);color:var(--accent);background:rgba(200,240,96,0.05)}
+.pill.blue{border-color:rgba(92,184,255,0.3);color:var(--blue);background:rgba(92,184,255,0.05)}
+.pill.orange{border-color:rgba(255,170,92,0.3);color:var(--orange);background:rgba(255,170,92,0.05)}
+.pill.purple{border-color:rgba(176,159,255,0.3);color:var(--purple);background:rgba(176,159,255,0.05)}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* SCROLL INDICATOR */
+.scroll-hint{
+  position:absolute;
+  bottom:2rem;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--text-muted);
+  letter-spacing:0.1em;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  animation:fadeUp 0.5s ease both 0.5s;
+}
+.scroll-line{
+  width:1px;height:40px;
+  background:linear-gradient(var(--accent),transparent);
+  animation:scrollLine 1.5s ease-in-out infinite;
+}
+@keyframes scrollLine{
+  0%{transform:scaleY(0);transform-origin:top}
+  50%{transform:scaleY(1);transform-origin:top}
+  51%{transform-origin:bottom}
+  100%{transform:scaleY(0);transform-origin:bottom}
+}
+
+/* SECTION */
+section{
+  position:relative;
+  z-index:1;
+  max-width:1000px;
+  margin:0 auto;
+  padding:5rem 2rem;
+  border-top:1px solid var(--border);
+}
+section:first-of-type{border-top:none}
+
+.section-label{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:1rem;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.section-label::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(to right,var(--border2),transparent);
+}
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,5vw,3rem);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.1;
+  margin-bottom:1rem;
+}
+.section-title em{color:var(--accent);font-style:normal}
+.section-desc{
+  font-size:1rem;
+  color:var(--text-muted);
+  max-width:600px;
+  margin-bottom:3rem;
+  font-family:'Syne',sans-serif;
+}
+
+/* CARDS GRID */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.card{
+  background:var(--surface);
+  padding:1.75rem;
+  transition:background 0.2s;
+}
+.card:hover{background:var(--surface2)}
+.card-icon{
+  width:40px;height:40px;
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1rem;
+  font-size:18px;
+}
+.card-icon.green{background:rgba(200,240,96,0.1);color:var(--accent)}
+.card-icon.blue{background:rgba(92,184,255,0.1);color:var(--blue)}
+.card-icon.orange{background:rgba(255,170,92,0.1);color:var(--orange)}
+.card-icon.purple{background:rgba(176,159,255,0.1);color:var(--purple)}
+.card-icon.red{background:rgba(255,92,92,0.1);color:var(--red)}
+.card h3{
+  font-family:'Syne',sans-serif;
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.card p{font-size:13px;color:var(--text-muted);line-height:1.6;font-family:'Syne',sans-serif}
+
+/* FLOW DIAGRAM */
+.flow{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.flow-step{
+  display:flex;
+  gap:1.5rem;
+  position:relative;
+}
+.flow-step::before{
+  content:'';
+  position:absolute;
+  left:19px;
+  top:44px;
+  bottom:-1px;
+  width:2px;
+  background:linear-gradient(var(--border2),transparent);
+}
+.flow-step:last-child::before{display:none}
+.flow-num{
+  width:40px;height:40px;
+  border-radius:50%;
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  font-weight:500;
+  color:var(--accent);
+  flex-shrink:0;
+  background:var(--surface);
+  position:relative;
+  z-index:1;
+}
+.flow-content{
+  padding:0 0 2.5rem;
+  flex:1;
+}
+.flow-content h3{
+  font-family:'Syne',sans-serif;
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:4px;
+  padding-top:8px;
+}
+.flow-content p{font-size:13px;color:var(--text-muted);font-family:'Syne',sans-serif;line-height:1.6}
+.flow-tag{
+  display:inline-block;
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  padding:2px 8px;
+  border-radius:4px;
+  margin-top:6px;
+  background:rgba(200,240,96,0.08);
+  color:var(--accent);
+  border:1px solid rgba(200,240,96,0.2);
+}
+
+/* CODE BLOCKS */
+.code-block{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  margin:1.5rem 0;
+}
+.code-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.code-title{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  color:var(--text-muted);
+}
+.code-lang{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  padding:2px 8px;
+  border-radius:4px;
+  background:rgba(200,240,96,0.08);
+  color:var(--accent);
+  border:1px solid rgba(200,240,96,0.2);
+}
+pre{
+  padding:1.25rem 1.5rem;
+  overflow-x:auto;
+  font-family:'DM Mono',monospace;
+  font-size:12.5px;
+  line-height:1.7;
+  color:#ccc;
+}
+.kw{color:#c8f060}
+.str{color:#ffaa5c}
+.cm{color:#555;font-style:italic}
+.cls{color:#5cb8ff}
+.ann{color:#b09fff}
+.num{color:#ff9090}
+
+/* ARCH DIAGRAM */
+.arch{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:2rem;
+  margin:2rem 0;
+}
+.arch-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:1rem 0;
+}
+.arch-box{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:12px 20px;
+  text-align:center;
+  min-width:120px;
+}
+.arch-box.accent{
+  border-color:rgba(200,240,96,0.4);
+  background:rgba(200,240,96,0.06);
+}
+.arch-box.blue{border-color:rgba(92,184,255,0.4);background:rgba(92,184,255,0.06)}
+.arch-box.orange{border-color:rgba(255,170,92,0.4);background:rgba(255,170,92,0.06)}
+.arch-box.purple{border-color:rgba(176,159,255,0.4);background:rgba(176,159,255,0.06)}
+.arch-box-title{
+  font-family:'Syne',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:2px;
+}
+.arch-box-sub{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--text-muted);
+}
+.arch-arrow{
+  color:var(--text-muted);
+  font-size:18px;
+  font-family:'DM Mono',monospace;
+}
+.arch-label{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--text-muted);
+  text-align:center;
+  margin:0.5rem 0;
+  letter-spacing:0.08em;
+}
+
+/* SECURITY TABLE */
+.sec-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:1.5rem 0;
+}
+.sec-table th{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-align:left;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border2);
+}
+.sec-table td{
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+  font-family:'Syne',sans-serif;
+  vertical-align:top;
+}
+.sec-table tr:hover td{background:var(--surface2)}
+.badge-fixed{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  padding:2px 8px;
+  border-radius:4px;
+  background:rgba(200,240,96,0.1);
+  color:var(--accent);
+  border:1px solid rgba(200,240,96,0.2);
+  white-space:nowrap;
+}
+.badge-p0{background:rgba(255,92,92,0.1);color:var(--red);border-color:rgba(255,92,92,0.3)}
+.badge-p1{background:rgba(255,170,92,0.1);color:var(--orange);border-color:rgba(255,170,92,0.3)}
+.badge-p2{background:rgba(92,184,255,0.1);color:var(--blue);border-color:rgba(92,184,255,0.3)}
+
+/* API TABLE */
+.api-entry{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:12px;
+}
+.api-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 18px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.method{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  padding:3px 10px;
+  border-radius:4px;
+  min-width:50px;
+  text-align:center;
+}
+.method.get{background:rgba(92,184,255,0.15);color:var(--blue);border:1px solid rgba(92,184,255,0.3)}
+.method.post{background:rgba(200,240,96,0.15);color:var(--accent);border:1px solid rgba(200,240,96,0.3)}
+.api-path{
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  color:var(--text);
+}
+.api-desc{
+  font-family:'Syne',sans-serif;
+  font-size:12px;
+  color:var(--text-muted);
+  margin-left:auto;
+}
+.api-body{
+  padding:14px 18px;
+}
+.api-body p{font-size:13px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-bottom:10px}
+.param-row{
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+  padding:6px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.param-row:last-child{border-bottom:none}
+.param-name{font-family:'DM Mono',monospace;color:var(--accent);min-width:120px}
+.param-type{font-family:'DM Mono',monospace;color:var(--text-muted);min-width:80px}
+.param-desc{color:var(--text-dim);font-family:'Syne',sans-serif}
+
+/* SERVICE STACK */
+.stack{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  margin:2rem 0;
+}
+.stack-item{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:1.25rem;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  transition:border-color 0.2s,transform 0.2s;
+}
+.stack-item:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stack-name{
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  font-weight:700;
+}
+.stack-role{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--text-muted);
+}
+.stack-version{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--accent);
+  margin-top:auto;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+}
+
+/* FILE TREE */
+.tree{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:1.5rem;
+  font-family:'DM Mono',monospace;
+  font-size:13px;
+  line-height:2;
+}
+.tree-dir{color:var(--blue)}
+.tree-file{color:var(--text-dim)}
+.tree-file.accent{color:var(--accent)}
+.tree-file.orange{color:var(--orange)}
+.tree-indent{padding-left:1.5rem;display:block}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}}
+
+/* HIGHLIGHT BOX */
+.highlight-box{
+  background:rgba(200,240,96,0.04);
+  border:1px solid rgba(200,240,96,0.2);
+  border-radius:10px;
+  padding:1.5rem;
+  margin:1.5rem 0;
+}
+.highlight-box.blue{background:rgba(92,184,255,0.04);border-color:rgba(92,184,255,0.2)}
+.highlight-box.orange{background:rgba(255,170,92,0.04);border-color:rgba(255,170,92,0.2)}
+.highlight-box.red{background:rgba(255,92,92,0.04);border-color:rgba(255,92,92,0.2)}
+.highlight-box h4{
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:8px;
+  color:var(--accent);
+}
+.highlight-box.blue h4{color:var(--blue)}
+.highlight-box.orange h4{color:var(--orange)}
+.highlight-box.red h4{color:var(--red)}
+.highlight-box p,.highlight-box li{font-size:13px;color:var(--text-muted);font-family:'Syne',sans-serif;line-height:1.7}
+.highlight-box ul{padding-left:1.2rem}
+.highlight-box li{margin-bottom:4px}
+
+/* FOOTER */
+footer{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:4rem 2rem;
+  border-top:1px solid var(--border);
+}
+footer .footer-logo{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;
+  font-weight:800;
+  letter-spacing:-0.03em;
+  margin-bottom:1rem;
+}
+footer .footer-logo span{color:var(--accent)}
+footer p{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-muted)}
+
+/* INLINE CODE */
+code{
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  padding:1px 6px;
+  border-radius:4px;
+  color:var(--accent);
+}
+
+/* STATUS BADGES */
+.status-ok{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--accent);
+}
+.status-ok::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">TEMP<span>MAIL</span></a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#flow">Flow</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#code">Code</a></li>
+    <li><a href="#frontend">Frontend</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">✦ Project Documentation v1.0</div>
+  <h1>TEMP<em>MAIL</em></h1>
+  <p class="hero-sub">A full-stack disposable email service built with Spring Boot, PostgreSQL, and Mailgun. Complete project documentation — architecture, security, APIs, and flows.</p>
+  <div class="hero-pills">
+    <span class="pill green">Spring Boot 4.0</span>
+    <span class="pill blue">PostgreSQL</span>
+    <span class="pill orange">Mailgun</span>
+    <span class="pill purple">ngrok</span>
+    <span class="pill">Java 21</span>
+    <span class="pill">Hibernate 7</span>
+    <span class="pill green">DOMPurify</span>
+    <span class="pill blue">JPA</span>
+  </div>
+  <div class="scroll-hint">
+    SCROLL
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="section-label">01 — Overview</div>
+  <h2 class="section-title">What is <em>TempMail?</em></h2>
+  <p class="section-desc">A disposable email service that generates temporary inboxes that expire after 10 minutes. No signup required, no data retained.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon green">📨</div>
+      <h3>Instant Inbox</h3>
+      <p>Generate a random temporary email address with a single click. No registration, no personal data required.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon orange">⏱</div>
+      <h3>10-Minute Expiry</h3>
+      <p>Every inbox automatically expires after 10 minutes. A scheduled cleanup job deletes all expired inboxes and emails.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon blue">🔒</div>
+      <h3>Token-Based Access</h3>
+      <p>Each inbox gets a unique 32-character secret token. Without it, no one can read your emails — prevents IDOR attacks.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon purple">🔄</div>
+      <h3>Auto Refresh</h3>
+      <p>Inbox page polls for new emails every 10 seconds automatically. No manual refresh needed.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon green">🛡</div>
+      <h3>XSS Protected</h3>
+      <p>All email content is sanitized using DOMPurify before rendering. Malicious HTML/JS in email bodies cannot execute.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon orange">📬</div>
+      <h3>Mailgun Webhook</h3>
+      <p>Receives real emails via Mailgun's inbound routing webhook. Signature verification prevents fake webhook calls.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-label">02 — Architecture</div>
+  <h2 class="section-title">System <em>Architecture</em></h2>
+  <p class="section-desc">A layered Spring Boot MVC application with JPA persistence, scheduled cleanup, and webhook-based email ingestion.</p>
+
+  <div class="arch">
+    <div class="arch-label">BROWSER / CLIENT</div>
+    <div class="arch-row">
+      <div class="arch-box accent">
+        <div class="arch-box-title">index.html</div>
+        <div class="arch-box-sub">Generate Inbox</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box accent">
+        <div class="arch-box-title">inbox.html</div>
+        <div class="arch-box-sub">View Emails</div>
+      </div>
+    </div>
+    <div class="arch-label">↕ HTTP / REST API</div>
+    <div class="arch-row">
+      <div class="arch-box blue">
+        <div class="arch-box-title">InboxController</div>
+        <div class="arch-box-sub">/api/inbox</div>
+      </div>
+      <div class="arch-box blue">
+        <div class="arch-box-title">EmailController</div>
+        <div class="arch-box-sub">/api/emails</div>
+      </div>
+    </div>
+    <div class="arch-label">↕ Service Layer</div>
+    <div class="arch-row">
+      <div class="arch-box purple">
+        <div class="arch-box-title">InboxService</div>
+        <div class="arch-box-sub">Inbox logic</div>
+      </div>
+      <div class="arch-box purple">
+        <div class="arch-box-title">EmailService</div>
+        <div class="arch-box-sub">Email logic</div>
+      </div>
+      <div class="arch-box purple">
+        <div class="arch-box-title">CleanupService</div>
+        <div class="arch-box-sub">Scheduled job</div>
+      </div>
+    </div>
+    <div class="arch-label">↕ JPA / Hibernate</div>
+    <div class="arch-row">
+      <div class="arch-box orange">
+        <div class="arch-box-title">PostgreSQL</div>
+        <div class="arch-box-sub">inbox + emails tables</div>
+      </div>
+    </div>
+    <div class="arch-label" style="margin-top:1.5rem">EXTERNAL SERVICES</div>
+    <div class="arch-row">
+      <div class="arch-box">
+        <div class="arch-box-title">Mailgun</div>
+        <div class="arch-box-sub">Inbound routing</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">
+        <div class="arch-box-title">ngrok</div>
+        <div class="arch-box-sub">Tunnel for dev</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box blue">
+        <div class="arch-box-title">Webhook</div>
+        <div class="arch-box-sub">/api/emails/receive</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem">
+    <div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">Database Schema</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">inbox table</span>
+          <span class="code-lang">SQL</span>
+        </div>
+        <pre><span class="kw">CREATE TABLE</span> inbox (
+  id           <span class="cls">UUID</span>         <span class="kw">PRIMARY KEY</span>,
+  email_address <span class="cls">VARCHAR</span>(<span class="num">255</span>) <span class="kw">UNIQUE NOT NULL</span>,
+  access_token  <span class="cls">VARCHAR</span>(<span class="num">255</span>) <span class="kw">NOT NULL</span>,
+  expiry_time   <span class="cls">TIMESTAMP</span>,
+  created_at    <span class="cls">TIMESTAMP</span>
+);</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">emails table</span>
+          <span class="code-lang">SQL</span>
+        </div>
+        <pre><span class="kw">CREATE TABLE</span> emails (
+  id          <span class="cls">UUID</span>    <span class="kw">PRIMARY KEY</span>,
+  inbox_id    <span class="cls">UUID</span>    <span class="kw">REFERENCES</span> inbox(id),
+  sender      <span class="cls">VARCHAR</span>(<span class="num">255</span>),
+  subject     <span class="cls">VARCHAR</span>(<span class="num">255</span>),
+  body        <span class="cls">TEXT</span>,
+  received_at <span class="cls">TIMESTAMP</span>
+);</pre>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">Project Structure</h3>
+      <div class="tree">
+        <span class="tree-dir">src/main/java/com/tempmail/</span>
+        <span class="tree-indent"><span class="tree-dir">config/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file accent">SecurityConfig.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file accent">GlobalExceptionHandler.java</span></span></span>
+        <span class="tree-indent"><span class="tree-dir">controller/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">InboxController.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">EmailController.java</span></span></span>
+        <span class="tree-indent"><span class="tree-dir">service/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">InboxService.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">EmailService.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">CleanupService.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file orange">MailgunSignatureVerifier.java</span></span></span>
+        <span class="tree-indent"><span class="tree-dir">entity/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">Inbox.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">Email.java</span></span></span>
+        <span class="tree-indent"><span class="tree-dir">repository/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">InboxRepository.java</span></span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">EmailRepository.java</span></span></span>
+        <span class="tree-indent"><span class="tree-dir">dto/ &amp; mapper/</span></span>
+        <span class="tree-indent"><span class="tree-dir">util/</span></span>
+        <span class="tree-indent"><span class="tree-indent"><span class="tree-file">CleanupScheduler.java</span></span></span>
+        <span class="tree-dir">src/main/resources/static/</span>
+        <span class="tree-indent"><span class="tree-file accent">index.html</span></span>
+        <span class="tree-indent"><span class="tree-file accent">inbox.html</span></span>
+        <span class="tree-indent"><span class="tree-file">js/index.js &amp; inbox.js</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section id="flow">
+  <div class="section-label">03 — Flow</div>
+  <h2 class="section-title">How It <em>Works</em></h2>
+  <p class="section-desc">End-to-end flow from inbox creation to email delivery.</p>
+
+  <div class="two-col">
+    <div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1.5rem">Inbox Creation Flow</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <h3>User clicks "Generate Email"</h3>
+            <p>Frontend calls <code>POST /api/inbox/create</code></p>
+            <span class="flow-tag">index.js</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <h3>InboxService generates address + token</h3>
+            <p>10-char alphanumeric email using SecureRandom. 32-char access token generated separately.</p>
+            <span class="flow-tag">InboxService.java</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <h3>Inbox saved to PostgreSQL</h3>
+            <p>Inbox entity persisted with 10-minute expiry time set from creation time.</p>
+            <span class="flow-tag">InboxRepository.java</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <h3>Token stored in localStorage</h3>
+            <p>Browser stores the secret token. User redirected to inbox page.</p>
+            <span class="flow-tag">index.js</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1.5rem">Email Receive Flow</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <h3>Email sent to sandbox domain</h3>
+            <p>Sender sends email to any address at the Mailgun sandbox domain.</p>
+            <span class="flow-tag">Mailgun</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <h3>Mailgun route fires webhook</h3>
+            <p>Mailgun's catch_all() route forwards payload to your ngrok/server URL via POST.</p>
+            <span class="flow-tag">Mailgun Route</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <h3>Signature verified</h3>
+            <p>HMAC-SHA256 signature checked against Mailgun signing key. Fake webhooks rejected.</p>
+            <span class="flow-tag">MailgunSignatureVerifier.java</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <h3>Email saved to inbox</h3>
+            <p>Recipient looked up, email entity saved. Inbox page auto-refreshes and shows it.</p>
+            <span class="flow-tag">EmailService.java</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin:3rem 0 1.5rem">Cleanup Flow</h3>
+  <div class="flow" style="max-width:500px">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h3>Scheduler runs every 60 seconds</h3>
+        <p><code>@Scheduled(fixedRate = 60000)</code> triggers CleanupService.</p>
+        <span class="flow-tag">CleanupScheduler.java</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h3>Find all expired inboxes</h3>
+        <p>Query: <code>SELECT * FROM inbox WHERE expiry_time &lt; NOW()</code></p>
+        <span class="flow-tag">InboxRepository.java</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h3>Delete emails first</h3>
+        <p>Foreign key constraint requires emails to be deleted before their inbox. Bulk delete per inbox.</p>
+        <span class="flow-tag">EmailRepository.java</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h3>Delete inboxes</h3>
+        <p>All expired inboxes deleted. Transaction ensures atomicity — no partial deletes.</p>
+        <span class="flow-tag">@Transactional</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API -->
+<section id="api">
+  <div class="section-label">04 — API Reference</div>
+  <h2 class="section-title">REST <em>API</em></h2>
+  <p class="section-desc">All endpoints exposed by the Spring Boot application.</p>
+
+  <div class="api-entry">
+    <div class="api-header">
+      <span class="method post">POST</span>
+      <span class="api-path">/api/inbox/create</span>
+      <span class="api-desc">Create new temporary inbox</span>
+    </div>
+    <div class="api-body">
+      <p>Creates a new inbox with a random email address and secret access token. Returns the inbox details including the access token — store it immediately.</p>
+      <div class="param-row"><span class="param-name">Response</span><span class="param-type">InboxDto</span><span class="param-desc">id, emailAddress, accessToken, expiryTime, createdAt</span></div>
+    </div>
+  </div>
+
+  <div class="api-entry">
+    <div class="api-header">
+      <span class="method get">GET</span>
+      <span class="api-path">/api/inbox/{email}</span>
+      <span class="api-desc">Get inbox metadata</span>
+    </div>
+    <div class="api-body">
+      <p>Returns inbox details for a given email address.</p>
+      <div class="param-row"><span class="param-name">email</span><span class="param-type">path</span><span class="param-desc">The full email address</span></div>
+    </div>
+  </div>
+
+  <div class="api-entry">
+    <div class="api-header">
+      <span class="method get">GET</span>
+      <span class="api-path">/api/emails/{email}?token=</span>
+      <span class="api-desc">Get all emails in inbox</span>
+    </div>
+    <div class="api-body">
+      <p>Returns all emails for the given inbox. Requires the secret access token. Returns 403 if token is wrong, 410 if inbox has expired.</p>
+      <div class="param-row"><span class="param-name">email</span><span class="param-type">path</span><span class="param-desc">The inbox email address</span></div>
+      <div class="param-row"><span class="param-name">token</span><span class="param-type">query</span><span class="param-desc">Secret access token from inbox creation</span></div>
+    </div>
+  </div>
+
+  <div class="api-entry">
+    <div class="api-header">
+      <span class="method post">POST</span>
+      <span class="api-path">/api/emails/receive</span>
+      <span class="api-desc">Mailgun inbound webhook</span>
+    </div>
+    <div class="api-body">
+      <p>Called by Mailgun when an email is received. Verifies HMAC-SHA256 signature before processing. Always returns 200 to prevent Mailgun retries.</p>
+      <div class="param-row"><span class="param-name">sender</span><span class="param-type">form</span><span class="param-desc">Sender email address</span></div>
+      <div class="param-row"><span class="param-name">subject</span><span class="param-type">form</span><span class="param-desc">Email subject</span></div>
+      <div class="param-row"><span class="param-name">body-plain</span><span class="param-type">form</span><span class="param-desc">Plain text email body</span></div>
+      <div class="param-row"><span class="param-name">recipient</span><span class="param-type">form</span><span class="param-desc">The tempmail address the email was sent to</span></div>
+      <div class="param-row"><span class="param-name">timestamp</span><span class="param-type">form</span><span class="param-desc">Unix timestamp from Mailgun</span></div>
+      <div class="param-row"><span class="param-name">token</span><span class="param-type">form</span><span class="param-desc">Mailgun webhook token</span></div>
+      <div class="param-row"><span class="param-name">signature</span><span class="param-type">form</span><span class="param-desc">HMAC-SHA256 signature</span></div>
+    </div>
+  </div>
+
+  <div class="api-entry">
+    <div class="api-header">
+      <span class="method post">POST</span>
+      <span class="api-path">/api/emails/test</span>
+      <span class="api-desc">⚠ Testing only — remove before production</span>
+    </div>
+    <div class="api-body">
+      <p>Manually inject a test email into any inbox. Used for local development and testing without Mailgun.</p>
+      <div class="param-row"><span class="param-name">email</span><span class="param-type">query</span><span class="param-desc">Target inbox address</span></div>
+      <div class="param-row"><span class="param-name">sender</span><span class="param-type">query</span><span class="param-desc">Sender to display</span></div>
+      <div class="param-row"><span class="param-name">subject</span><span class="param-type">query</span><span class="param-desc">Email subject</span></div>
+      <div class="param-row"><span class="param-name">body</span><span class="param-type">query</span><span class="param-desc">Email body text</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+  <div class="section-label">05 — Security</div>
+  <h2 class="section-title">Security <em>Hardening</em></h2>
+  <p class="section-desc">Every vulnerability found, fixed, and documented.</p>
+
+  <table class="sec-table">
+    <thead>
+      <tr>
+        <th>Vulnerability</th>
+        <th>Priority</th>
+        <th>Fix Applied</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>XSS via innerHTML</strong><br><span style="font-size:12px;color:var(--text-muted)">Email content injected as raw HTML in inbox.js</span></td>
+        <td><span class="badge-fixed badge-p0">P0 Critical</span></td>
+        <td>Replaced innerHTML with textContent. Added DOMPurify for HTML email bodies.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>IDOR on /api/emails/{email}</strong><br><span style="font-size:12px;color:var(--text-muted)">Any user could read any inbox by guessing email</span></td>
+        <td><span class="badge-fixed badge-p0">P0 Critical</span></td>
+        <td>Added 32-char secret access token. Token required on every email read request.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Unauthenticated Webhook</strong><br><span style="font-size:12px;color:var(--text-muted)">Anyone could POST fake emails to /receive</span></td>
+        <td><span class="badge-fixed badge-p0">P0 Critical</span></td>
+        <td>HMAC-SHA256 Mailgun signature verification via MailgunSignatureVerifier.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Open /api/emails/test endpoint</strong><br><span style="font-size:12px;color:var(--text-muted)">Public phishing/injection vector in production</span></td>
+        <td><span class="badge-fixed badge-p0">P0 Critical</span></td>
+        <td>Kept for local dev only. Must be removed before production deployment.</td>
+        <td><span class="status-ok">Dev Only</span></td>
+      </tr>
+      <tr>
+        <td><strong>Weak Email Address Entropy</strong><br><span style="font-size:12px;color:var(--text-muted)">UUID substring(0,6) = only 16M combinations</span></td>
+        <td><span class="badge-fixed badge-p1">P1 High</span></td>
+        <td>Replaced with SecureRandom 10-char alphanumeric = 839 trillion combinations.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Missing Security Headers</strong><br><span style="font-size:12px;color:var(--text-muted)">No CSP, HSTS, X-Frame-Options</span></td>
+        <td><span class="badge-fixed badge-p1">P1 High</span></td>
+        <td>Added CSP, HSTS (1yr), X-Frame-Options deny in SecurityConfig.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>No Rate Limiting</strong><br><span style="font-size:12px;color:var(--text-muted)">Inbox farming and enumeration possible</span></td>
+        <td><span class="badge-fixed badge-p1">P1 High</span></td>
+        <td>Pending — Bucket4j integration planned before production.</td>
+        <td><span class="badge-fixed badge-p1">Pending</span></td>
+      </tr>
+      <tr>
+        <td><strong>RuntimeException as 500</strong><br><span style="font-size:12px;color:var(--text-muted)">Stack traces exposed to client</span></td>
+        <td><span class="badge-fixed badge-p2">P2 Medium</span></td>
+        <td>GlobalExceptionHandler added. All exceptions return clean JSON. Stack traces logged server-side only.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Cleanup FK Violation</strong><br><span style="font-size:12px;color:var(--text-muted)">DELETE on inbox failed due to FK constraint from emails</span></td>
+        <td><span class="badge-fixed badge-p2">P2 Medium</span></td>
+        <td>CleanupService now deletes emails first, then inboxes. @Transactional added.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+      <tr>
+        <td><strong>Expired inbox still readable</strong><br><span style="font-size:12px;color:var(--text-muted)">Between cleanup runs, expired inboxes leaked data</span></td>
+        <td><span class="badge-fixed badge-p2">P2 Medium</span></td>
+        <td>EmailService.getEmails() checks expiry time and returns 410 Gone immediately.</td>
+        <td><span class="status-ok">Fixed</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight-box">
+    <h4>Mailgun Webhook Signature Verification</h4>
+    <p>Every inbound webhook is verified using HMAC-SHA256. The verification formula is:</p>
+    <div class="code-block" style="margin-top:10px">
+      <pre>signature = HMAC-SHA256(signingKey, timestamp + token)
+if (computed_hex != signature) → return 200 "ignored"</pre>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="section-label">06 — Tech Stack</div>
+  <h2 class="section-title">Services <em>Used</em></h2>
+  <p class="section-desc">Every technology and service used to build TempMail.</p>
+
+  <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1rem">Backend</h3>
+  <div class="stack">
+    <div class="stack-item">
+      <div class="stack-name">Spring Boot</div>
+      <div class="stack-role">Application Framework</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">REST controllers, DI, scheduled tasks, security config</p>
+      <div class="stack-version">v4.0.5</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Spring Security</div>
+      <div class="stack-role">Security Layer</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">CSP headers, HSTS, X-Frame-Options, request authorization</p>
+      <div class="stack-version">v7.0.4</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Hibernate / JPA</div>
+      <div class="stack-role">ORM</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Entity mapping, JPQL queries, cascade operations, transactions</p>
+      <div class="stack-version">v7.2.7</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">PostgreSQL</div>
+      <div class="stack-role">Database</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Persistent storage for inboxes and emails. UUID primary keys.</p>
+      <div class="stack-version">v42.7.10 driver</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Lombok</div>
+      <div class="stack-role">Code Generation</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">@Builder, @Getter, @Setter, @RequiredArgsConstructor, @Slf4j</p>
+      <div class="stack-version">latest</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">HikariCP</div>
+      <div class="stack-role">Connection Pool</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">High-performance JDBC connection pooling. Auto-configured by Spring Boot.</p>
+      <div class="stack-version">v7.0.2</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin:2rem 0 1rem">Frontend</h3>
+  <div class="stack">
+    <div class="stack-item">
+      <div class="stack-name">Vanilla JS</div>
+      <div class="stack-role">Frontend Logic</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Fetch API, DOM manipulation, localStorage for token storage</p>
+      <div class="stack-version">ES2022</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">DOMPurify</div>
+      <div class="stack-role">XSS Sanitizer</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Sanitizes HTML email bodies before rendering. Prevents XSS attacks.</p>
+      <div class="stack-version">v3.1.5</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">Syne + DM Mono</div>
+      <div class="stack-role">Typography</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Google Fonts. Syne for display/UI, DM Mono for code and addresses.</p>
+      <div class="stack-version">Google Fonts</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin:2rem 0 1rem">External Services</h3>
+  <div class="stack">
+    <div class="stack-item">
+      <div class="stack-name">Mailgun</div>
+      <div class="stack-role">Email Service</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Inbound email routing via webhooks. Sandbox domain for testing. HMAC signature verification.</p>
+      <div class="stack-version">API v3</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-name">ngrok</div>
+      <div class="stack-role">Dev Tunnel</div>
+      <p style="font-size:12px;color:var(--text-muted);font-family:'Syne',sans-serif;margin-top:6px">Exposes local port 8080 to the internet so Mailgun webhooks can reach your dev machine.</p>
+      <div class="stack-version">v3.37.6</div>
+    </div>
+  </div>
+</section>
+
+<!-- CODE -->
+<section id="code">
+  <div class="section-label">07 — Key Code</div>
+  <h2 class="section-title">Core <em>Implementation</em></h2>
+  <p class="section-desc">The most important pieces of the codebase explained.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">InboxService.java — createInbox()</span>
+      <span class="code-lang">Java</span>
+    </div>
+    <pre><span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">InboxService</span> {
+
+  <span class="kw">private static final int</span> EXPIRY_MINUTES = <span class="num">10</span>;
+
+  <span class="kw">public</span> <span class="cls">InboxDto</span> createInbox() {
+    <span class="cls">String</span> email = generateRandomEmail();   <span class="cm">// 10-char alphanumeric</span>
+    <span class="cls">String</span> token = generateAccessToken();   <span class="cm">// 32-char secret</span>
+
+    <span class="cls">Inbox</span> inbox = <span class="cls">Inbox</span>.builder()
+      .emailAddress(email)
+      .accessToken(token)
+      .createdAt(<span class="cls">LocalDateTime</span>.now())
+      .expiryTime(<span class="cls">LocalDateTime</span>.now().plusMinutes(EXPIRY_MINUTES))
+      .build();
+
+    <span class="kw">return</span> <span class="cls">InboxMapper</span>.toDto(inboxRepository.save(inbox));
+  }
+
+  <span class="kw">private</span> <span class="cls">String</span> randomString(<span class="kw">int</span> length) {
+    <span class="cls">String</span> chars = <span class="str">"abcdefghijklmnopqrstuvwxyz0123456789"</span>;
+    <span class="cls">SecureRandom</span> rng = <span class="kw">new</span> <span class="cls">SecureRandom</span>();
+    <span class="cls">StringBuilder</span> sb = <span class="kw">new</span> <span class="cls">StringBuilder</span>(length);
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; length; i++)
+      sb.append(chars.charAt(rng.nextInt(chars.length())));
+    <span class="kw">return</span> sb.toString();
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">MailgunSignatureVerifier.java</span>
+      <span class="code-lang">Java</span>
+    </div>
+    <pre><span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="cls">MailgunSignatureVerifier</span> {
+
+  <span class="ann">@Value</span>(<span class="str">"${mailgun.webhook.signing-key}"</span>)
+  <span class="kw">private</span> <span class="cls">String</span> signingKey;
+
+  <span class="kw">public boolean</span> isValid(<span class="cls">String</span> timestamp, <span class="cls">String</span> token, <span class="cls">String</span> signature) {
+    <span class="kw">try</span> {
+      <span class="cls">String</span> data = timestamp + token;
+      <span class="cls">Mac</span> mac = <span class="cls">Mac</span>.getInstance(<span class="str">"HmacSHA256"</span>);
+      mac.init(<span class="kw">new</span> <span class="cls">SecretKeySpec</span>(
+        signingKey.getBytes(<span class="cls">StandardCharsets</span>.UTF_8), <span class="str">"HmacSHA256"</span>));
+      <span class="kw">byte</span>[] hash = mac.doFinal(data.getBytes(<span class="cls">StandardCharsets</span>.UTF_8));
+
+      <span class="cm">// Convert to hex and compare</span>
+      <span class="cls">StringBuilder</span> hex = <span class="kw">new</span> <span class="cls">StringBuilder</span>();
+      <span class="kw">for</span> (<span class="kw">byte</span> b : hash)
+        hex.append(<span class="cls">String</span>.format(<span class="str">"%02x"</span>, b));
+
+      <span class="kw">return</span> hex.toString().equals(signature);
+    } <span class="kw">catch</span> (<span class="cls">Exception</span> e) {
+      log.error(<span class="str">"Signature verification error"</span>, e);
+      <span class="kw">return false</span>;
+    }
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">CleanupService.java — deleteExpiredInboxes()</span>
+      <span class="code-lang">Java</span>
+    </div>
+    <pre><span class="ann">@Slf4j</span>
+<span class="ann">@Service</span>
+<span class="ann">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="cls">CleanupService</span> {
+
+  <span class="ann">@Transactional</span>
+  <span class="kw">public void</span> deleteExpiredInboxes() {
+    <span class="cls">List</span>&lt;<span class="cls">Inbox</span>&gt; expired =
+      inboxRepository.findAllExpiredBefore(<span class="cls">LocalDateTime</span>.now());
+
+    <span class="kw">if</span> (expired.isEmpty()) <span class="kw">return</span>;
+
+    <span class="cm">// Step 1: delete emails first (FK constraint)</span>
+    <span class="kw">for</span> (<span class="cls">Inbox</span> inbox : expired)
+      emailRepository.deleteByInboxId(inbox.getId());
+
+    <span class="cm">// Step 2: now safe to delete inboxes</span>
+    inboxRepository.deleteAll(expired);
+
+    log.info(<span class="str">"Cleanup complete — deleted {} expired inboxes"</span>, expired.size());
+  }
+}</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">inbox.js — safe email rendering</span>
+      <span class="code-lang">JavaScript</span>
+    </div>
+    <pre>emails.forEach(e => {
+  <span class="kw">const</span> div = document.createElement(<span class="str">"div"</span>);
+
+  <span class="cm">// ✅ textContent for all untrusted fields — never innerHTML</span>
+  <span class="kw">const</span> subject = document.createElement(<span class="str">"h4"</span>);
+  subject.textContent = e.subject;         <span class="cm">// safe</span>
+
+  <span class="kw">const</span> from = document.createElement(<span class="str">"p"</span>);
+  from.textContent = <span class="str">"From: "</span> + e.sender;  <span class="cm">// safe</span>
+
+  <span class="kw">const</span> body = document.createElement(<span class="str">"div"</span>);
+  <span class="cm">// DOMPurify sanitizes HTML email bodies</span>
+  body.innerHTML = DOMPurify.sanitize(e.body);
+
+  div.append(subject, from, body);
+  container.appendChild(div);
+});</pre>
+  </div>
+</section>
+
+<!-- FRONTEND -->
+<section id="frontend">
+  <div class="section-label">08 — Frontend</div>
+  <h2 class="section-title">UI & <em>Frontend</em></h2>
+  <p class="section-desc">Two-page dark UI built with vanilla HTML/CSS/JS.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="highlight-box">
+        <h4>index.html — Landing Page</h4>
+        <ul>
+          <li>Dark grid background with accent glow</li>
+          <li>Single "Generate Email" CTA button</li>
+          <li>Loading spinner on button click</li>
+          <li>Saves access token to localStorage on creation</li>
+          <li>Redirects to inbox page with email in URL param</li>
+        </ul>
+      </div>
+      <div class="highlight-box blue">
+        <h4>inbox.html — Inbox Page</h4>
+        <ul>
+          <li>Sticky header with live countdown timer</li>
+          <li>Timer turns red when under 2 minutes</li>
+          <li>One-click copy email address button</li>
+          <li>Email cards with click-to-expand bodies</li>
+          <li>Auto-refresh every 10 seconds via setInterval</li>
+          <li>Manual refresh button with spinner</li>
+          <li>Empty state with icon when no emails</li>
+          <li>410 expired state with clear messaging</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="highlight-box orange">
+        <h4>Design System</h4>
+        <ul>
+          <li>Dark theme — #080808 background</li>
+          <li>Accent color — #c8f060 (lime green)</li>
+          <li>Grid background pattern via CSS</li>
+          <li>Syne font for headings and UI</li>
+          <li>DM Mono for code, addresses, badges</li>
+          <li>Lora for body text (documentation)</li>
+          <li>Fade-up entrance animations</li>
+          <li>CSS variables for full theme consistency</li>
+        </ul>
+      </div>
+      <div class="highlight-box">
+        <h4>Security in Frontend</h4>
+        <ul>
+          <li>Access token stored in localStorage</li>
+          <li>Token sent on every API call as query param</li>
+          <li>Redirect to home if no token found</li>
+          <li>Redirect to home if 403 received</li>
+          <li>DOMPurify loaded from Cloudflare CDN</li>
+          <li>All user-facing strings use textContent</li>
+          <li>Email param encoded with encodeURIComponent</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin:2rem 0 1rem">Local Development Setup</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Running the project locally</span>
+      <span class="code-lang">bash</span>
+    </div>
+    <pre><span class="cm"># 1. Start PostgreSQL and create database</span>
+psql -U postgres -c <span class="str">"CREATE DATABASE tempmail;"</span>
+
+<span class="cm"># 2. Configure application.properties</span>
+spring.datasource.url=jdbc:postgresql://localhost:5432/tempmail
+spring.datasource.username=postgres
+spring.datasource.password=yourpassword
+spring.jpa.hibernate.ddl-auto=update
+mailgun.webhook.signing-key=your_signing_key
+
+<span class="cm"># 3. Run Spring Boot</span>
+mvn spring-boot:run
+
+<span class="cm"># 4. Start ngrok tunnel (separate terminal)</span>
+ngrok http 8080
+
+<span class="cm"># 5. Update Mailgun route with ngrok URL</span>
+<span class="cm"># Receiving → Routes → edit forward URL</span>
+
+<span class="cm"># 6. Open browser</span>
+open http://localhost:8080</pre>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">TEMP<span>MAIL</span></div>
+  <p style="margin-bottom:8px">Built with Spring Boot 4.0 · PostgreSQL · Mailgun · ngrok</p>
+  <p>Java 21 · Hibernate 7 · Spring Security 7 · DOMPurify 3</p>
+  <p style="margin-top:1rem;color:var(--border2)">Documentation generated for Vidhan Lonare · 2026</p>
+</footer>
+
+<script>
+// Smooth active nav highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.style.color = link.getAttribute('href') === '#' + entry.target.id
+          ? 'var(--accent)' : '';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
